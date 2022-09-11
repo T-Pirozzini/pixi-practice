@@ -6,8 +6,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
   <script src="js/pixi.min.js"></script>
-  <script>
+  <script type="module">
     let app;
+    let player;
+    let keys = {
+
+    }
 
     window.onload = function() {
        app = new PIXI.Application(
@@ -18,9 +22,42 @@
         }
        );
 
-       document.body.appendChild(app.view);
+       document.body.appendChild(app.view);     
+
+       // player object
+       player = PIXI.Sprite.from("images/player.png");
+       player.anchor.set(0.5);
+       player.x = app.view.width / 2;
+       player.y = app.view.height /2;
+
+       app.stage.addChild(player);
+
+       // mouse interactions
+       app.stage.interactive = true;
+       app.stage.on('pointermove', movePlayer) 
+       
+       // keyboard event handlers
+       window.addEventListener("keydown", keyDown)
+       window.addEventListener("keyUp", keyUp);
 
     };
+
+    function movePlayer(e) {
+      let pos = e.data.global;      
+      player.x = pos.x;
+      player.y = pos.y;      
+    }
+
+    function keyDown(e) {
+      console.log(e.keyCode)
+      keys[e.keyCode] = true;
+    }
+
+    function keyUp(e) {
+      console.log(e.keyCode)
+      keys[e.keyCode] = false;
+    }
+
   </script>
 </head>
 <body>
