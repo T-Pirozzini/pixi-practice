@@ -9,9 +9,8 @@
   <script type="module">
     let app;
     let player;
-    let keys = {
-
-    }
+    let keys = {};
+    let keysDiv; 
 
     window.onload = function() {
        app = new PIXI.Application(
@@ -38,7 +37,11 @@
        
        // keyboard event handlers
        window.addEventListener("keydown", keyDown)
-       window.addEventListener("keyUp", keyUp);
+       window.addEventListener("keyup", keyUp);
+
+       app.ticker.add(gameLoop);
+
+       keysDiv = document.getElementById("keys");
 
     };
 
@@ -48,19 +51,36 @@
       player.y = pos.y;      
     }
 
-    function keyDown(e) {
-      console.log(e.keyCode)
+    function keyDown(e) {      
       keys[e.keyCode] = true;
     }
 
-    function keyUp(e) {
-      console.log(e.keyCode)
+    function keyUp(e) {      
       keys[e.keyCode] = false;
+    }
+
+    function gameLoop() {
+      keysDiv.innerHTML = JSON.stringify(keys);
+
+      // player movement
+      if (keys["87"]) {
+        player.y -= 5;
+      }
+      if (keys["83"]) {
+        player.y += 5;
+      }
+      if (keys["65"]) {
+        player.x -= 5;
+      }
+      if (keys["68"]) {
+        player.x += 5;
+      }
     }
 
   </script>
 </head>
 <body>
+  <div id ="keys"></div>
   
 </body>
 </html>
