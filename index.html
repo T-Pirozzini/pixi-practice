@@ -11,6 +11,8 @@
     let player;
     let keys = {};
     let keysDiv; 
+    let bullets = [];
+    let bulletSpeed = 10;
 
     window.onload = function() {
        app = new PIXI.Application(
@@ -21,7 +23,10 @@
         }
        );
 
-       document.body.appendChild(app.view);
+      //  document.body.appendChild(app.view);
+
+       document.querySelector('#gameDiv').appendChild(app.view);
+       document.querySelector('#gameDiv').addEventListener("pointerdown", fireBullet)
        
        // preload assets
        app.loader.baseUrl = "images";      
@@ -66,6 +71,39 @@
 
     };
 
+    function fireBullet(e) {
+      console.log('FIRE!');
+      let bullet = createBullet();
+      bullets.push(bullet);
+    }
+
+    function createBullet() {
+      let bullet = PIXI.Sprite.from('images/bullet.png')
+      bullet.anchor.set(0.5);
+      bullet.x = player.x;
+      bullet.y = player.y;
+      bullet.speed = bulletSpeed;
+      app.stage.addChild(bullet);
+
+      return bullet;
+    }
+
+    function updateBullets() {
+      for (let i = 0; i < bullets.length; i++) {
+        bullets[i].position.y -= bullets[i].speed
+
+        if (bullets[i].position.y < 0) {
+          bullets[i].dead = true;
+        }
+      }
+      for (let i = 0; i < bullets.length; i++) {
+        if (bullets[i].dead) {
+          app.stage.removeChild(bullets[i]);
+          bullets.splice(i, 1)
+        }
+      }
+    }
+
     function showProgress(e) {
       console.log(e.progress)
     }
@@ -97,7 +135,10 @@
       keys[e.keyCode] = false;
     }
 
-    function gameLoop() {
+    function gameLoop(delta) {
+
+      updateBullets(delta);
+
       keysDiv.innerHTML = JSON.stringify(keys);
 
       // player movement
@@ -118,7 +159,8 @@
   </script>
 </head>
 <body>
-  <div id ="keys"></div>
+  <div id="keys"></div>
+  <div id="gameDiv"></div>
   
 </body>
 </html>
